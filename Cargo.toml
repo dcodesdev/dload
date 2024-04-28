@@ -1,0 +1,14 @@
+[package]
+name = "dload"
+version = "0.1.0"
+edition = "2021"
+description = "A simple crate to help you download files from URLs easily."
+license = "MIT"
+
+[dependencies]
+futures = "0.3.30"
+reqwest = { version = "0.12.4", features = ["stream"] }
+
+[dev-dependencies]
+tokio = { version = "1.37.0", features = ["full"] }
+sysinfo = "0.30.11"
