@@ -13,7 +13,7 @@ cargo add dload
 Then you can use it like this:
 
 ```rust
-use dload::download;
+use dload::Downloader;
 
 fn main() {
   let url = "https://www.rust-lang.org/logos/rust-logo-512x512.png";
