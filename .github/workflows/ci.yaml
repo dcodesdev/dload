@@ -2,11 +2,12 @@ name: Rust Test
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
+
+env:
+  CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
 jobs:
   build_and_test:
@@ -24,3 +25,7 @@ jobs:
 
       - name: Run tests
         run: cargo test
+
+      - name: Publish
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: cargo publish || true
