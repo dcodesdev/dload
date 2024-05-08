@@ -10,7 +10,6 @@ pub struct Downloader {
     header: HeaderMap,
     output_dir: PathBuf,
     file_name: Option<String>,
-    client: Client,
     verbose: bool,
 }
 
@@ -22,7 +21,6 @@ impl Downloader {
             header: header.clone(),
             output_dir: std::env::current_dir().unwrap(),
             file_name: None,
-            client: Client::builder().default_headers(header).build().unwrap(),
             verbose: false,
         }
     }
@@ -72,8 +70,9 @@ impl Downloader {
             println!("Downloading {}", url);
         }
 
-        let mut stream = self
-            .client
+        let client = Client::new();
+
+        let mut stream = client
             .get(url)
             .headers(self.header.clone())
             .send()
