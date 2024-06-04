@@ -15,7 +15,8 @@ Then you can use it like this:
 ```rust
 use dload::Downloader;
 
-fn main() {
+#[tokio::main]
+async fn main() {
   let url = "https://www.rust-lang.org/logos/rust-logo-512x512.png";
 
   Downloader::new()

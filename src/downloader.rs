@@ -27,7 +27,7 @@ impl Downloader {
         }
     }
 
-    pub fn file_name(mut self, file_name: &'static str) -> Self {
+    pub fn file_name(mut self, file_name: &str) -> Self {
         self.file_name = Some(file_name.to_string());
         self
     }
