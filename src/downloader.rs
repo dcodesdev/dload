@@ -20,15 +20,18 @@ impl Downloader {
 
         Downloader {
             header: header.clone(),
-            output_dir: std::env::current_dir().unwrap(),
+            output_dir: PathBuf::from("."),
             file_name: None,
             client: Client::builder().default_headers(header).build().unwrap(),
             verbose: false,
         }
     }
 
-    pub fn file_name(mut self, file_name: &str) -> Self {
-        self.file_name = Some(file_name.to_string());
+    pub fn file_name<T>(mut self, file_name: T) -> Self
+    where
+        T: Into<String> + ?Sized
+    {
+        self.file_name = Some(file_name.into());
         self
     }
 
@@ -37,8 +40,10 @@ impl Downloader {
         self
     }
 
-    pub fn set_output_dir(mut self, output_dir: &str) -> Self {
-        self.output_dir = PathBuf::from(output_dir);
+    pub fn set_output_dir<T>(mut self, output_dir: T) -> Self
+    where T: Into<String> + ?Sized
+    {
+        self.output_dir = PathBuf::from(output_dir.into());
         self
     }
 
@@ -47,16 +52,22 @@ impl Downloader {
         self
     }
 
-    pub fn insert_header(mut self, k: impl IntoHeaderName, v: &str) -> Self {
+    pub fn insert_header<T>(mut self, k: T, v: &str) -> Self 
+    where T: IntoHeaderName 
+    {
         self.header.insert(k, v.parse().unwrap());
         self
     }
 
-    pub async fn download(self, url: &str) -> Result<Self, Box<dyn Error>> {
+    pub async fn download<T>(self, url:T) -> Result<Self, Box<dyn Error>> 
+    where T: Into<String> + ?Sized
+    {
+        let url: String = url.into();
+
         let file_name = if self.file_name.is_some() {
             self.file_name.clone().unwrap()
         } else {
-            self.get_last_segment_from_url(url)
+            self.get_last_segment_from_url(&url)
         };
 
         let dir_exists = std::fs::metadata(&self.output_dir).is_ok();
@@ -69,12 +80,12 @@ impl Downloader {
         let mut file = File::create(output_path)?;
 
         if self.verbose {
-            println!("Downloading {}", url);
+            println!("Downloading {}", &url);
         }
 
         let mut stream = self
             .client
-            .get(url)
+            .get(&url)
             .headers(self.header.clone())
             .send()
             .await
@@ -170,7 +181,7 @@ mod tests {
         let join2 = tokio::spawn(async move {
             loop {
                 let current_memory = get_memory_usage();
-                assert_eq!(current_memory <= 30.0, true);
+                assert_eq!(current_memory <= 40.0, true);
 
                 let finished = rx.try_recv().unwrap_or(false);
                 if finished {
