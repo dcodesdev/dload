@@ -25,4 +25,4 @@ jobs:
 
       - name: Publish
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: cargo publish || true
+        run: cargo publish
